@@ -57,7 +57,7 @@ resource "aws_lambda_function" "this" {
   function_name = local.name
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
-  runtime       = "nodejs22.x"
+  runtime       = "nodejs24.x"
   memory_size   = var.lambda_memory
   timeout       = var.lambda_timeout
 
