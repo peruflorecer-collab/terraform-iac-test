@@ -20,3 +20,5 @@ Para hacer pruebas en tu máquina sin afectar a nadie:
    ```bash
    terraform init
    terraform plan
+
+# Terraform
