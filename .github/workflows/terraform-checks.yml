@@ -1,0 +1,75 @@
+name: Terraform checks
+
+on:
+  pull_request:
+
+env:
+  tf_version: "~> 1.14"
+  aws_region: "us-east-1"
+
+jobs:
+  tf_format:
+    name: Format check
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.tf_version }}
+
+      - name: Check formatting
+        run: terraform fmt --recursive --check --diff
+
+  tf_validate:
+    name: Validate
+    runs-on: ubuntu-22.04
+    needs: tf_format
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.tf_version }}
+
+      - name: Terraform init (sin backend)
+        run: terraform init -backend=false
+
+      - name: Validate
+        run: terraform validate
+
+  tf_plan:
+    name: Plan
+    runs-on: ubuntu-22.04
+    needs: tf_validate
+    environment: ${{ github.base_ref }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.tf_version }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.aws_region }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform plan
+        run: |
+          terraform plan \
+            -var-file="envs/${{ github.base_ref }}.tfvars"

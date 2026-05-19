@@ -1,0 +1,7 @@
+*.tfstate
+*.tfstate.backup
+
+.terraform/
+
+*.tfvars
+!envs/*.tfvars  <-- (Esta línea permite que SÍ se suban los de tu carpeta envs)
