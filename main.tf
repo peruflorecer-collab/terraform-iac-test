@@ -10,11 +10,7 @@ terraform {
 
   # Backend en S3 para guardar el state remoto
   # Crea el bucket manualmente una vez antes de hacer terraform init
-  backend "s3" {
-    bucket = "mg-infra-back-front-terraform-state"
-    key    = "website-backend/terraform.tfstate"
-    region = "us-east-1"
-  }
+  backend "s3" {}
 }
 
 provider "aws" {
@@ -32,7 +28,7 @@ provider "aws" {
 module "lambda_api_ses" {
   source = "./modules/lambda_api_ses"
 
-  project_name   = var.project_name
+  project_name   = "mg-back-mailer"
   environment    = var.environment
   lambda_memory  = var.lambda_memory
   lambda_timeout = var.lambda_timeout

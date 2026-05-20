@@ -11,3 +11,7 @@ modules/**/*.zip
 
 .DS_Store
 Thumbs.db
+
+
+# Backend configs (generados por bootstrap-backend.sh)
+envs/**/backend.hcl

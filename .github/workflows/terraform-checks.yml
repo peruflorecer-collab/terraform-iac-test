@@ -66,8 +66,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Bootstrap backend (genera backend.hcl si no existe el bucket lo crea)
+        run: |
+          chmod +x bootstrap-backend.sh
+          ./bootstrap-backend.sh ${{ github.base_ref }}
+
       - name: Terraform init
-        run: terraform init
+        run: terraform init -backend-config=envs/${{ github.base_ref }}/backend.hcl
 
       - name: Terraform plan
         run: |

@@ -1,24 +1,34 @@
-# Doc
 # MG Infrastructure as Code (IaC)
 
-Este repositorio contiene la arquitectura de infraestructura basada en **Terraform** y **Terragrunt** para los entornos de Materia Gris. El despliegue está automatizado mediante GitHub Actions.
+Infraestructura de Materia Gris en Terraform. Despliegue automatizado con GitHub Actions.
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura
 
-* `.github/workflows/`: Contiene los pipelines de automatización (CI/CD).
-* `envs/`: Archivos de variables específicos para cada entorno (`dev.tfvars`, `staging.tfvars`, `prod.tfvars`).
-* `terraform.tfvars`: **(Local únicamente)** Archivo en la raíz para tus pruebas locales en tu AWS personal. Está ignorado en Git para evitar subir credenciales o datos de prueba.
+- `.github/workflows/` — Pipelines CI/CD
+- `envs/` — Variables por entorno (`dev.tfvars`, `staging.tfvars`, `prod.tfvars`)
+- `terraform.tfvars` — ⚠️ Solo local, ignorado en Git
 
 ---
 
-## 🚀 Flujo de Trabajo (GitOps)
+## 🚀 Comandos
 
-### 1. Desarrollo Local
-Para hacer pruebas en tu máquina sin afectar a nadie:
-1. Configura tus variables locales en el archivo `terraform.tfvars` de la raíz.
-2. Inicializa y simula tus cambios localmente:
-   ```bash
-   terraform init
-   terraform plan
+### Primera vez (crear bucket S3 del state)
+```bash
+./bootstrap-backend.sh <env>   # dev | staging | prod
+```
 
-# Terraform
+### Init
+```bash
+terraform init -backend-config=envs/<env>/backend.hcl
+```
+
+### Plan / Apply
+```bash
+terraform plan  -var-file=envs/<env>.tfvars
+terraform apply -var-file=envs/<env>.tfvars
+```
+
+### Destroy
+```bash
+terraform destroy -var-file=envs/<env>.tfvars
+```
